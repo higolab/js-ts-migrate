@@ -1,0 +1,12 @@
+
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "../js-out",	// output directory for JavaScript files
+    "rootDir": ".",        
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["./**/*"]		// include all files in the current directory and subdirectories
+}
