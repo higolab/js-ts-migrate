@@ -1,0 +1,15 @@
+[submodule "freeCodeCamp"]
+	path = freeCodeCamp
+	url = https://github.com/freeCodeCamp/freeCodeCamp.git
+[submodule "developer-roadmap"]
+	path = developer-roadmap
+	url = https://github.com/kamranahmedse/developer-roadmap.git
+[submodule "vue"]
+	path = vue
+	url = https://github.com/vuejs/vue.git
+[submodule "vscode"]
+	path = vscode
+	url = https://github.com/microsoft/vscode.git
+[submodule "tech-interview-handbook"]
+	path = tech-interview-handbook
+	url = https://github.com/yangshun/tech-interview-handbook.git
