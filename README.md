@@ -2,6 +2,7 @@
 
 JavascriptコードをTypescriptに変換する研究
 
+### 準備
 
 clone
 
@@ -16,6 +17,24 @@ brew install node
 # install typescript
 npm install -g typescript
 ```
+
+### 動作確認
+動作確認の為にtranspile_testフォルダを使用
+
+```zsh
+cd transpile_test
+
+# 1st way (creating tsconfig.json)
+tsc --init
+tsc
+
+# 2nd way (running tsc without tsconfig.json)
+tsc main.ts
+
+```
+今回は1st wayを使用する
+
+### 変換
 
 クローンした後、tsファイルのみコピーする。
 
