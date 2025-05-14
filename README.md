@@ -40,7 +40,7 @@ tsc main.ts
 
 ```zsh
 cd tsrepos
-rsync -av --include='*/' --include='*.ts' --exclude='*' ./ ../tsfiles
+rsync -av --include='*/' --include='*.ts' --exclude='*' ./ ../tsfiles > /dev/null
 ```
 
 変換用jsonファイルもコピーする
@@ -50,7 +50,7 @@ cp tsconfig.json ../tsfiles
 
 空のフォルダを再帰的に削除する
 ```zsh
-find . -type d -empty -delete
+find ../tsfiles -type d -empty -delete
 ```
 
 変換する
@@ -59,3 +59,13 @@ cd ../tsfiles
 # convert typescript to javascript
 tsc
 ```
+
+ドットで始まるフォルダも対象に含めるなら、
+```json
+{
+  "include": [
+    "**/.*/**/*.ts"  // ドットで始まる全てのフォルダ内の TypeScript ファイルを対象に追加
+  ],
+}
+```
+を追記する
