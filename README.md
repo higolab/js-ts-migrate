@@ -36,11 +36,11 @@ tsc main.ts
 
 ### 変換
 
-クローンした後、tsファイルのみコピーする。
+クローンした後、tsファイルのみコピーする。.d.tsファイルは除外する。
 
 ```zsh
 cd tsrepos
-rsync -av --include='*/' --include='*.ts' --exclude='*' ./ ../tsfiles > /dev/null
+rsync -av --include='*/' --exclude='*.d.ts' --include='*.ts' --exclude='*' ./ ../tsfiles > /dev/null
 ```
 
 変換用jsonファイルもコピーする
@@ -69,3 +69,37 @@ tsc
 }
 ```
 を追記する
+
+ファイルが1:1になっているか確認する
+```zsh
+cd ..
+ls -R1 tsfiles >tsfiles.txt
+ls -R1 js-out >js-out.txt
+# 余計な文字列を削除
+sed -i '' 's/tsfiles//g' tsfiles.txt 
+sed -i '' 's/\.ts//g' tsfiles.txt
+sed -i '' 's/js-out//g' js-out.txt 
+sed -i '' 's/\.js//g' js-out.txt
+```
+
+vueのみ対象にする
+ファイル数が合わない原因
+変換できていないファイル
+.d.tsファイル(tsでのみ使用する、型情報が定義されているファイル)
+
+ts-migrateのインストール
+```zsh
+npm install -g ts-migrate
+```
+
+js出力をコピー
+```zsh
+cp -r js-out/* js-out2
+```
+
+ts-migrateの実行
+```zsh
+cd js-out2
+tsc --init
+ts-migrate-full .
+```
