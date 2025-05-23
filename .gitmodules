@@ -7,9 +7,6 @@
 [submodule "vue"]
 	path = tsrepos/vue
 	url = https://github.com/vuejs/vue.git
-[submodule "vscode"]
-	path = tsrepos/vscode
-	url = https://github.com/microsoft/vscode.git
 [submodule "tech-interview-handbook"]
 	path = tsrepos/tech-interview-handbook
 	url = https://github.com/yangshun/tech-interview-handbook.git
