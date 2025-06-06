@@ -25,48 +25,96 @@ migrated_index = index_by_file_and_name(migrated_data)
 
 type_loss = []
 type_change = []
+unchanged_any = []
+unchanged_not_any = []
 new_entries = []
 deleted_entries = []
 
-# 1. Check type lost and changed
+# ファイル名の共通集合を取得
+original_files = set(file for file, _ in original_index.keys())
+migrated_files = set(file for file, _ in migrated_index.keys())
+common_files = original_files & migrated_files
+new_files = migrated_files - original_files
+deleted_files = original_files - migrated_files
+
+# 共通ファイル内のエントリ数カウント
+common_original_count = sum(1 for (file, _) in original_index if file in common_files)
+common_migrated_count = sum(1 for (file, _) in migrated_index if file in common_files)
+
+# 共通ファイルのみ対象に比較
 for key in original_index:
+    file, name = key
+    if file not in common_files:
+        continue
+    
+    if key not in migrated_index:
+        deleted_entries.append({
+            "file": file,
+            "name": name,
+            "original_type": original_index[key]
+        })
+        continue
+
     orig_type = original_index[key]
     migrated_type = migrated_index.get(key)
 
-    if migrated_type is None:
-        deleted_entries.append((key[0], key[1], orig_type))
-    elif migrated_type == "any" and orig_type != "any":
-        type_loss.append((key[0], key[1], orig_type, migrated_type))
+    if migrated_type == "any" and orig_type != "any":
+        type_loss.append({
+            "file": file,
+            "name": name,
+            "original_type": orig_type,
+            "migrated_type": migrated_type
+        })
     elif orig_type != migrated_type and migrated_type != "any":
-        type_change.append((key[0], key[1], orig_type, migrated_type))
+        type_change.append({
+            "file": file,
+            "name": name,
+            "original_type": orig_type,
+            "migrated_type": migrated_type
+        })
+    elif orig_type == "any" and migrated_type == "any":
+        unchanged_any.append({
+            "file": file,
+            "name": name
+        })
+    elif orig_type == migrated_type:
+        unchanged_not_any.append({
+            "file": file,
+            "name": name,
+            "type": orig_type
+        })
 
-# 2. Check for new entries
+# new_entries: 共通ファイルに含まれる新しい名前のみ
 for key in migrated_index:
-    if key not in original_index:
-        new_entries.append((key[0], key[1], migrated_index[key]))
+    file, name = key
+    if key not in original_index and file in common_files:
+        new_entries.append({
+            "file": file,
+            "name": name,
+            "migrated_type": migrated_index[key]
+        })
 
-# === Report ===
-def section(title, entries, formatter):
-    print(f"\n=== {title} ({len(entries)}) ===")
-    for entry in entries:
-        print(formatter(*entry))
+# 出力
+result = {
+    "summary": {
+        "total_original": common_original_count,
+        "total_migrated": common_migrated_count,
+        "type_lost": len(type_loss),
+        "type_changed": len(type_change),
+        "unchanged_any": len(unchanged_any),
+        "unchanged_not_any": len(unchanged_not_any),
+        "new_entries": len(new_entries),
+        "deleted_entries": len(deleted_entries),
+        "common_files": len(common_files),
+        "new_files": len(new_files),
+        "deleted_files": len(deleted_files)
+    },
+    "type_lost": type_loss,
+    "type_changed": type_change,
+    "unchanged_any": unchanged_any,
+    "unchanged_not_any": unchanged_not_any,
+    "new_entries": new_entries,
+    "deleted_entries": deleted_entries
+}
 
-section("Type Lost (became 'any')", type_loss,
-        lambda file, name, orig, new: f"{file}: {name} changed from {orig} → {new}")
-
-section("Type Changed", type_change,
-        lambda file, name, orig, new: f"{file}: {name} changed from {orig} → {new}")
-
-section("New Entries in Migrated", new_entries,
-        lambda file, name, typ: f"{file}: {name} added as type {typ}")
-
-section("Deleted Entries", deleted_entries,
-        lambda file, name, orig: f"{file}: {name} (original type: {orig})")
-
-print(f"\nSummary:")
-print(f"  Total in original : {len(original_index)}")
-print(f"  Total in migrated : {len(migrated_index)}")
-print(f"  Type lost         : {len(type_loss)}")
-print(f"  Type changed      : {len(type_change)}")
-print(f"  New entries       : {len(new_entries)}")
-print(f"  Deleted entries   : {len(deleted_entries)}")
+print(json.dumps(result, indent=2, ensure_ascii=False))
