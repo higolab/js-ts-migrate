@@ -6,3 +6,6 @@ tsfiles/
 .DS_Store
 node_modules/
 asttest/
+transpile_test/
+type-deduction/*.txt
+type-deduction/*.json
