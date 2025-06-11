@@ -40,9 +40,10 @@ const program = ts.createProgram(fileNames, {
 const checker = program.getTypeChecker();
 
 type ResultEntry = {
+	path: string; // 相対パス
 	name: string;
 	type: string;
-	//line: number;
+	line: number;
 	file: string; // 相対パス
 };
 
@@ -64,11 +65,12 @@ function visit(sourceFile: ts.SourceFile) {
 					if (symbol) {
 						const type = checker.getTypeOfSymbolAtLocation(symbol, decl);
 						const typeStr = checker.typeToString(type);
-						//const { line } = ts.getLineAndCharacterOfPosition(sourceFile, decl.getStart());
+						const { line } = ts.getLineAndCharacterOfPosition(sourceFile, decl.getStart());
 						results.push({
+							path: inputDir + '/',
 							name: decl.name.text,
 							type: typeStr,
-							//line: line + 1,
+							line: line + 1,
 							file: path.relative(absInputDir, sourceFile.fileName),
 						});
 					}

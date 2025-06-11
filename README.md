@@ -22,8 +22,8 @@ npm install typescript
 `example`フォルダを対象にする場合は、以下のようにコマンドを実行します。
 
 ```zsh
-#module
 FOLDER=example
+# ts->js
 npx tsc tsrepos/$FOLDER/**/*.ts -outDir ts-js/$FOLDER --target es2024 --module ES2022 --moduleResolution node --lib es2024 --types node > ts-js.$FOLDER.log 2>&1
 #copy and js->ts
 cp -r ts-js/$FOLDER ts-js-ts
@@ -31,6 +31,7 @@ npx ts-migrate-full --no-git ts-js-ts/$FOLDER > ts-js-ts.$FOLDER.log 2>&1
 # extract types
 npx tsx type-deduction/analyze-types.ts tsrepos/$FOLDER > type-deduction/original.$FOLDER.json
 npx tsx type-deduction/analyze-types.ts ts-js-ts/$FOLDER > type-deduction/transpiled.$FOLDER.json
+# compare types
 python3 type-deduction/compare_types.py type-deduction/original.$FOLDER.json type-deduction/transpiled.$FOLDER.json > type-deduction/compare.$FOLDER.json
 python3 type-deduction/analyze_type_changes.py type-deduction/compare.$FOLDER.json > type-deduction/analyze.$FOLDER.json
 ```
