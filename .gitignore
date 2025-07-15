@@ -1,4 +1,11 @@
-js-out/
-js-out2/
+js-out*/
+ts-js/
+ts-js-ts/
+type-export/
 tsfiles/
 .DS_Store
+node_modules/
+asttest/
+transpile_test/
+type-deduction/*.txt
+type-deduction/*.json
